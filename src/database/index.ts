@@ -1,17 +1,9 @@
 import { Connection, createConnection } from 'typeorm';
 
 export const connectDatabase = async (): Promise<Connection> => {
-  const connection = await createConnection();
-
-  console.log(connection.options.entities);
-
-  return connection;
+  return await createConnection();
 };
 
-connectDatabase()
-  .then(connection => {
-    console.log(connection);
-  })
-  .catch(e => {
-    console.log('=> ' + e);
-  });
+connectDatabase().catch(e => {
+  console.log('=> ' + e);
+});
