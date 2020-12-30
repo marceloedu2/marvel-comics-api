@@ -4,7 +4,7 @@ import cors from 'cors';
 import 'express-async-errors';
 import routes from './routes';
 import 'reflect-metadata';
-
+import './database';
 import AppError from './erros/AppError';
 
 const app = express();
