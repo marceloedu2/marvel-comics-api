@@ -11,6 +11,7 @@ tmp/
 temp/
 logs/
 package-lock.json
+ormconfig.json
 
 .scannerwork
 sonar-project.properties
