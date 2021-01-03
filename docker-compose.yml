@@ -1,15 +1,6 @@
 version: '2'
 
 services:
-  api:
-    build: .
-    image: marvel/api
-    env_file:
-    - ./.env
-    ports:
-      - "3333:3333"
-    links:
-      - mongodb
   mongodb:
     image: 'docker.io/bitnami/mongodb:4.4-debian-10'
     ports:
