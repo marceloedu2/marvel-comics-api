@@ -9,6 +9,7 @@ const charactersFavoriteController = new CharactersFavoriteController();
 charactersRouter.post('/', charactersController.list);
 
 charactersRouter.post('/search', charactersController.search);
+charactersRouter.get('/:id/comics', charactersController.listComics);
 
 charactersRouter.get('/favorite', charactersFavoriteController.list);
 charactersRouter.post('/favorite', charactersFavoriteController.create);

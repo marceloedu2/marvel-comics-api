@@ -67,6 +67,41 @@ class CharactersServices {
       };
     });
   }
+  public async comicsByCharacters(id: number): Promise<any> {
+    const { data: comicsData } = await api.get(
+      `/v1/public/characters/${id}/comics`,
+      {
+        params: {
+          orderBy: 'modified',
+        },
+      },
+    );
+
+    if (!comicsData) {
+      throw new AppError('CharacterFavorite not found.');
+    }
+    console.log({ ComicsData: comicsData.data });
+    const comics = comicsData.data.results?.map((comic: any) => {
+      return {
+        id: comic.id,
+        name: comic.title,
+        description: comic.description || '',
+        modified: comic.modified,
+        url: `${comic.thumbnail.path}/portrait_uncanny.${comic.thumbnail.extension}`,
+      };
+    });
+
+    const currentPage = comicsData.data.offset;
+    delete comicsData.data.results;
+    delete comicsData.data.offset;
+
+    return {
+      ...comicsData.data,
+      currentPage,
+      maxPages: parseInt(String(comicsData.data.total / comicsData.data.limit)),
+      comics,
+    };
+  }
 }
 
 export default CharactersServices;
