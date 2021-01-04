@@ -80,7 +80,7 @@ class CharactersServices {
     if (!comicsData) {
       throw new AppError('CharacterFavorite not found.');
     }
-    console.log({ ComicsData: comicsData.data });
+
     const comics = comicsData.data.results?.map((comic: any) => {
       return {
         id: comic.id,
