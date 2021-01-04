@@ -8,6 +8,7 @@ const comicsFavoriteController = new ComicsFavoriteController();
 
 comicsRouter.post('/', comicsController.list);
 
+comicsRouter.post('/:id', comicsController.index);
 comicsRouter.post('/search', comicsController.search);
 comicsRouter.get('/:id/characters', comicsController.listCharacters);
 
