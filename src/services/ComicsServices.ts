@@ -12,23 +12,6 @@ interface IRequestSearch {
 }
 
 class ComicsServices {
-  public async index(comicId: number): Promise<IComic[]> {
-    const { data: comicsData } = await api.get(`/v1/public/comics/${comicId}`);
-
-    if (!comicsData) {
-      throw new AppError('Comic not found.');
-    }
-
-    return comicsData.data.results.map((comic: any) => {
-      return {
-        id: comic.id,
-        title: comic.title,
-        description: comic.description || '',
-        url: `${comic.thumbnail.path}/portrait_uncanny.${comic.thumbnail.extension}`,
-      };
-    });
-  }
-
   public async list({ offset }: IRequestList): Promise<IComics> {
     const { data: comicsData = [] } = await api.get('/v1/public/comics', {
       params: {
