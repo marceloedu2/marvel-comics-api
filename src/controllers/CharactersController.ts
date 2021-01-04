@@ -52,9 +52,8 @@ class CharactersController {
 
     const userId = request.user.id;
     const { id = 0 } = request.params;
-
     const favorites = await comicsFavoritesServices.list({ userId });
-    const comics = await charactersServices.comicsByCharacters(Number(id));
+    const comics = await charactersServices.listComicsByCharacter(Number(id));
 
     const comicsList = await comics.comics.map((comic: any) => {
       return {

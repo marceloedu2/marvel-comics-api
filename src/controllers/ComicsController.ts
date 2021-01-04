@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import ComicsServices from '../services/ComicsServices';
 import ComicsFavoritesServices from '../services/ComicsFavoritesServices';
+import CharactersFavoritesServices from '../services/CharactersFavoritesServices';
+import CharactersServices from '../services/CharactersServices';
 
 class ComicsController {
   public async list(request: Request, response: Response): Promise<void> {
@@ -45,21 +47,22 @@ class ComicsController {
     response: Response,
   ): Promise<void> {
     const userId = request.user.id;
-    const { page = 0 } = request.body;
-
-    const comicsFavoritesServices = new ComicsFavoritesServices();
+    const { id = 0 } = request.params;
+    const charactersFavoritesServices = new CharactersFavoritesServices();
     const comicsServices = new ComicsServices();
-    const favorites = await comicsFavoritesServices.list({ userId });
-    const comics = await comicsServices.list({ offset: page });
+    const favorites = await charactersFavoritesServices.list({ userId });
+    const characters = await comicsServices.listCharactersByComic(Number(id));
 
-    const comicsList = await comics.comics.map(comic => {
+    const charactersList = await characters.characters.map(character => {
       return {
-        ...comic,
-        liked: !!favorites.find(favorite => favorite.comicId === comic.id),
+        ...character,
+        liked: !!favorites.find(
+          favorite => favorite.characterId === character.id,
+        ),
       };
     });
 
-    response.json({ ...comics, comics: comicsList });
+    response.json({ ...characters, characters: charactersList });
   }
 }
 export default ComicsController;

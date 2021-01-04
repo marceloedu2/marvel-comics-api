@@ -1,6 +1,7 @@
 import api from '../config/apiMarvelConfig';
 import AppError from '../erros/AppError';
 import { IComic, IComics } from '../interfaces/comics';
+import { ICharacters } from '../interfaces/characters';
 
 interface IRequestList {
   offset: number;
@@ -60,6 +61,38 @@ class ComicsServices {
         url: `${comic.thumbnail.path}/portrait_uncanny.${comic.thumbnail.extension}`,
       };
     });
+  }
+
+  public async listCharactersByComic(comicId: number): Promise<ICharacters> {
+    const { data: charactersData = [] } = await api.get(
+      `/v1/public/comics/${comicId}/characters`,
+    );
+
+    const characters = await charactersData.data.results.map(
+      (character: any) => {
+        return {
+          id: character.id,
+          name: character.name,
+          description: character.description || '',
+          modified: character.modified,
+          url: `${character.thumbnail.path}/portrait_uncanny.${character.thumbnail.extension}`,
+        };
+      },
+    );
+    const currentPage = charactersData.data.offset;
+
+    charactersData.data.results = '';
+    delete charactersData.data.results;
+    delete charactersData.data.offset;
+
+    return {
+      ...charactersData.data,
+      currentPage,
+      maxPages: parseInt(
+        String(charactersData.data.total / charactersData.data.limit),
+      ),
+      characters,
+    };
   }
 }
 

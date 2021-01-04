@@ -1,6 +1,7 @@
 import api from '../config/apiMarvelConfig';
 import { ICharacter, ICharacters } from '../interfaces/characters';
 import AppError from '../erros/AppError';
+import { IComics } from '../interfaces/comics';
 
 type IRequestList = {
   offset: number;
@@ -67,9 +68,9 @@ class CharactersServices {
       };
     });
   }
-  public async comicsByCharacters(id: number): Promise<any> {
+  public async listComicsByCharacter(characterId: number): Promise<IComics> {
     const { data: comicsData } = await api.get(
-      `/v1/public/characters/${id}/comics`,
+      `/v1/public/characters/${characterId}/comics`,
       {
         params: {
           orderBy: 'modified',
@@ -84,7 +85,7 @@ class CharactersServices {
     const comics = comicsData.data.results?.map((comic: any) => {
       return {
         id: comic.id,
-        name: comic.title,
+        title: comic.title,
         description: comic.description || '',
         modified: comic.modified,
         url: `${comic.thumbnail.path}/portrait_uncanny.${comic.thumbnail.extension}`,
