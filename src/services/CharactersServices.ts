@@ -12,6 +12,25 @@ type IRequestIndex = {
 };
 
 class CharactersServices {
+  public async getById(characterId: number): Promise<ICharacter[]> {
+    const { data: characterData } = await api.get(
+      `/v1/public/characters/${characterId}`,
+    );
+
+    if (!characterData) {
+      throw new AppError('CharacterFavorite not found.');
+    }
+    const character = characterData?.data?.results.map((character: any) => {
+      return {
+        id: character.id,
+        name: character.name,
+        description: character.description,
+        url: `${character.thumbnail?.path}/portrait_uncanny.${character.thumbnail?.extension}`,
+      };
+    });
+    return character;
+  }
+
   public async list({ offset }: IRequestList): Promise<ICharacters> {
     const { data: charactersData } = await api.get('/v1/public/characters', {
       params: {
@@ -48,7 +67,9 @@ class CharactersServices {
     };
   }
 
-  public async index({ name: nameDate }: IRequestIndex): Promise<ICharacter[]> {
+  public async search({
+    name: nameDate,
+  }: IRequestIndex): Promise<ICharacter[]> {
     const { data: characterData } = await api.get('/v1/public/characters', {
       params: {
         orderBy: 'modified',

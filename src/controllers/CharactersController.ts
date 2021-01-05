@@ -4,6 +4,47 @@ import CharactersFavoritesServices from '../services/CharactersFavoritesServices
 import ComicsFavoritesServices from '../services/ComicsFavoritesServices';
 
 class CharactersController {
+  public async index(request: Request, response: Response): Promise<void> {
+    const charactersServices = new CharactersServices();
+    const charactersFavoritesServices = new CharactersFavoritesServices();
+
+    const userId = request.user.id;
+    const { id } = request.params;
+
+    const favorites = await charactersFavoritesServices.list({ userId });
+    const characters = await charactersServices.getById(Number(id));
+
+    const charactersList = await characters.map(characters => {
+      return {
+        ...characters,
+        liked: !!favorites.find(
+          favorite => favorite.characterId === characters.id,
+        ),
+      };
+    });
+    response.json(charactersList[0] || []);
+  }
+
+  public async search(request: Request, response: Response): Promise<void> {
+    const charactersServices = new CharactersServices();
+    const charactersFavoritesServices = new CharactersFavoritesServices();
+
+    const userId = request.user.id;
+    const { name } = request.body;
+    const favorites = await charactersFavoritesServices.list({ userId });
+    const characters = await charactersServices.search({ name });
+
+    const charactersList = await characters.map(characters => {
+      return {
+        ...characters,
+        liked: !!favorites.find(
+          favorite => favorite.characterId === characters.id,
+        ),
+      };
+    });
+    response.json(charactersList);
+  }
+
   public async list(request: Request, response: Response): Promise<void> {
     const charactersServices = new CharactersServices();
     const charactersFavoritesServices = new CharactersFavoritesServices();
@@ -25,25 +66,6 @@ class CharactersController {
       };
     });
     response.json({ ...characters, characters: charactersList });
-  }
-  public async search(request: Request, response: Response): Promise<void> {
-    const charactersServices = new CharactersServices();
-    const charactersFavoritesServices = new CharactersFavoritesServices();
-
-    const userId = request.user.id;
-    const { name } = request.body;
-    const favorites = await charactersFavoritesServices.list({ userId });
-    const characters = await charactersServices.index({ name });
-
-    const charactersList = await characters.map(characters => {
-      return {
-        ...characters,
-        liked: !!favorites.find(
-          favorite => favorite.characterId === characters.id,
-        ),
-      };
-    });
-    response.json(charactersList);
   }
 
   public async listComics(request: Request, response: Response): Promise<void> {
