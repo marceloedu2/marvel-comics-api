@@ -5,6 +5,25 @@ import CharactersFavoritesServices from '../services/CharactersFavoritesServices
 import CharactersServices from '../services/CharactersServices';
 
 class ComicsController {
+  public async index(request: Request, response: Response): Promise<void> {
+    const userId = request.user.id;
+    const { id = 0 } = request.params;
+
+    const comicsFavoritesServices = new ComicsFavoritesServices();
+    const comicsServices = new ComicsServices();
+    const favorites = await comicsFavoritesServices.list({ userId });
+    const comic = await comicsServices.getById(Number(id));
+
+    const comicsList = await comic.map(comic => {
+      return {
+        ...comic,
+        liked: !!favorites.find(favorite => favorite.comicId === comic.id),
+      };
+    });
+
+    response.json(comicsList[0] || comicsList);
+  }
+
   public async list(request: Request, response: Response): Promise<void> {
     const userId = request.user.id;
     const { page = 0 } = request.body;
@@ -23,6 +42,7 @@ class ComicsController {
 
     response.json({ ...comics, comics: comicsList });
   }
+
   public async search(request: Request, response: Response): Promise<void> {
     const userId = request.user.id;
     const { title } = request.body;
